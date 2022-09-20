@@ -13,6 +13,10 @@
                     <div style="margin-left: 1rem; font-size: 12pt;">
                         Household Trip Calendar
                     </div>
+
+                    <div style="margin-left: auto;">
+                        <lightning-button-icon icon-name="utility:refresh"  variant="brand" size="medium" alternative-text="Refresh" onclick={handleRefresh}></lightning-button-icon>
+                    </div>
                 </div>
 
                 <template if:true={isExpanded}>
@@ -20,13 +24,15 @@
 
                         <template for:each={data} for:item="currentYear">
                             <div key={currentYear.year}>
-                                <div class="customYearStyle">
-                                    {currentYear.year}
-                                </div>
+                                <template if:false={startAtCurrentMonth}>
+                                    <div class="customYearStyle">
+                                        {currentYear.year}
+                                    </div>
+                                </template>
 
                                 <div class="slds-grid slds-wrap">
                                     <template for:each={currentYear.months} for:item="currentMonth">
-                                        <div key={currentMonth.monthNumber} class="slds-col slds-size_4-of-12" style="border-top: thin solid lightgrey; padding: 0.5rem;">
+                                        <div key={currentMonth.monthNumber} class="slds-col slds-size_4-of-12" style="padding: 0.5rem;"> <!--border-top: thin solid lightgrey;-->
                                             <div class="customMonthStyle">
                                                 {currentMonth.monthName}
                                             </div>

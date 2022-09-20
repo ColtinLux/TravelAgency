@@ -10,6 +10,7 @@
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
             <property name="yearPaginationEnabled" type="Boolean" label="Show Year Pagination" default="false"/>
+            <property name="startAtCurrentMonth" type="Boolean" label="Start Calendar at Current Month" default="false"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

@@ -3,6 +3,7 @@ import getTripCalendar from '@salesforce/apex/HouseholdTripCalendarController.ge
 
 export default class HouseholdTripCalendar extends LightningElement {
     @api yearPaginationEnabled;
+    @api startAtCurrentMonth;
     @api recordId;
 
     @track isLoading;
@@ -20,7 +21,7 @@ export default class HouseholdTripCalendar extends LightningElement {
     }
 
     getData(){
-        getTripCalendar({recordId: this.recordId})
+        getTripCalendar({recordId: this.recordId, startWithCurrentMonth: this.startAtCurrentMonth})
             .then(result => {
                 //console.log(JSON.stringify(JSON.parse(result)));
                 this.data = [JSON.parse(result)];
@@ -38,5 +39,9 @@ export default class HouseholdTripCalendar extends LightningElement {
 
     handleContract(){
         this.isExpanded = false;
+    }
+
+    handleRefresh(){
+        this.connectedCallback();
     }
 }
