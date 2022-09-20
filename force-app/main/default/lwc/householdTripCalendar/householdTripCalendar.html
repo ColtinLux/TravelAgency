@@ -1,0 +1,61 @@
+<template>
+    <template if:false={isLoading}>
+        <article class="slds-card">
+            <div class="slds-card__body slds-card__body_inner">
+                <div style="display: flex; align-items: center;">
+                    <template if:false={isExpanded}>
+                        <lightning-button-icon icon-name="utility:expand_alt"  variant="brand" size="medium" alternative-text="Expand View" onclick={handleExpand}></lightning-button-icon>
+                    </template>
+                    <template if:true={isExpanded}>
+                        <lightning-button-icon icon-name="utility:contract_alt"  variant="brand" size="medium" alternative-text="Contract View" onclick={handleContract}></lightning-button-icon>
+                    </template>
+    
+                    <div style="margin-left: 1rem; font-size: 12pt;">
+                        Household Trip Calendar
+                    </div>
+                </div>
+
+                <template if:true={isExpanded}>
+                    <div style="border: thin solid lightgrey; margin-top: 1rem;">
+
+                        <template for:each={data} for:item="currentYear">
+                            <div key={currentYear.year}>
+                                <div class="customYearStyle">
+                                    {currentYear.year}
+                                </div>
+
+                                <div class="slds-grid slds-wrap">
+                                    <template for:each={currentYear.months} for:item="currentMonth">
+                                        <div key={currentMonth.monthNumber} class="slds-col slds-size_4-of-12" style="border-top: thin solid lightgrey; padding: 0.5rem;">
+                                            <div class="customMonthStyle">
+                                                {currentMonth.monthName}
+                                            </div>
+    
+                                            <template for:each={currentMonth.weeks} for:item="currentWeek">
+                                                <div key={currentWeek.weekNumber} style="display: flex; justify-content: space-evenly;">
+                                                    <template for:each={currentWeek.days} for:item="currentDay">
+                                                        <div key={currentDay.dayOfYearNumber} class="customDayStyle" style={currentDay.style}>
+                                                            {currentDay.dayNumber}
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </article>
+    </template>
+
+    <template if:true={isLoading}>
+        <article class="slds-card">
+            <div class="slds-card__body slds-card__body_inner" style="min-height: 5rem;">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </article>
+    </template>
+</template>

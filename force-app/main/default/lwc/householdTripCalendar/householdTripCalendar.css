@@ -1,0 +1,18 @@
+.customYearStyle {
+    display: flex;
+    justify-content: center;
+}
+
+.customMonthStyle {
+    display: flex;
+    justify-content: center;
+    color: red;
+}
+
+.customDayStyle {
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+}
