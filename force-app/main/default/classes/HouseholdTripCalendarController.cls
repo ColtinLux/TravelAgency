@@ -1,3 +1,6 @@
+// Author: Coltin Lappin-Lux
+// Date: 9/20/2022
+
 public without sharing class HouseholdTripCalendarController {
     @AuraEnabled
     public static String getTripCalendar(Id recordId, Boolean startWithCurrentMonth){

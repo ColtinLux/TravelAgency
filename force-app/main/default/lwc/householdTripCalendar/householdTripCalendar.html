@@ -30,9 +30,9 @@
                                     </div>
                                 </template>
 
-                                <div class="slds-grid slds-wrap">
+                                <div class="slds-grid slds-wrap" style="display: flex; justify-content: space-evenly;">
                                     <template for:each={currentYear.months} for:item="currentMonth">
-                                        <div key={currentMonth.monthNumber} class="slds-col slds-size_4-of-12" style="padding: 0.5rem;"> <!--border-top: thin solid lightgrey;-->
+                                        <div key={currentMonth.monthNumber} class="slds-col slds-size_4-of-12" style="min-width: 12rem; padding: 0.5rem;"> <!--border-top: thin solid lightgrey;-->
                                             <div class="customMonthStyle">
                                                 {currentMonth.monthName}
                                             </div>
