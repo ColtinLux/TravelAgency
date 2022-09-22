@@ -1,0 +1,118 @@
+<template>
+    <lightning-quick-action-panel header={headerTitle}>
+        <!-- SCHEDULING ASSISTANT -->
+        <template if:true={showSchedulingModal}>
+            <lightning-tabset variant="scoped" style="overflow: scroll;">
+                <template for:each={tabs} for:item="tab">
+                    <lightning-tab label={tab.label} key={tab.value} value={tab.value} onactive={handleActiveTab}>
+                        <div style="display: flex;">
+
+                            <!-- TRIP DAYS COLUMN -->
+                            <div class="customSectionStyle">
+                                <div class="customHeaderBoxStyle" style="background: rgb(182 216 211)">
+                                    Trip Days
+                                </div>
+                                <div class="customBodyBoxStyle" style="background: rgb(182 216 211)">
+                                    <template for:each={dayData} for:item="dayRecord">
+                                        <template if:true={dayRecord.selected}>
+                                            <div id={dayRecord.id} key={dayRecord.id} data-id={dayRecord.id} class="customBoxStyle" style="background: white;" onclick={handleDaySelection}>
+                                                {dayRecord.label} - {dayRecord.weekDay} - {dayRecord.location}
+                                            </div>
+                                        </template>
+                                        <template if:false={dayRecord.selected}>
+                                            <div id={dayRecord.id} key={dayRecord.id} data-id={dayRecord.id} class="customBoxStyle" style="background: rgb(182 216 211)" onclick={handleDaySelection}>
+                                                {dayRecord.label} - {dayRecord.weekDay} - {dayRecord.location}
+                                            </div>
+                                        </template>
+                                    </template>
+                                </div>
+                            </div>
+                            <div style="min-width: 32px">
+                            </div>
+    
+                            <!-- SCHEDULED ACTIVITIES COLUMN -->
+                            <div class="customSectionStyle">
+                                <div class="customHeaderBoxStyle" style="background: lightblue">
+                                    Scheduled Activities
+                                </div>
+                                <div class="customBodyBoxStyle" style="background: lightblue">
+                                    <template for:each={scheduledData} for:item="activityRecord">
+                                        <template if:true={activityRecord.selected}>
+                                            <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;" hidden={activityRecord.hidden} onclick={handleScheduledActivitySelection}>
+                                                {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                            </div>
+                                        </template>
+                                        <template if:false={activityRecord.selected}>
+                                            <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: lightblue" hidden={activityRecord.hidden} onclick={handleScheduledActivitySelection}>
+                                                {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                            </div>
+                                        </template>
+                                    </template>
+                                </div>
+                            </div>
+    
+                            <!-- MOVE BUTTONS -->
+                            <div style="display: flex; flex-direction: column; justify-content: center;">
+                                <lightning-button-icon icon-name="utility:left" variant="brand" alternative-text="Add" title="Add" style="margin-bottom: 0.5rem;" disabled={disableMoveButtons} onclick={handleAddActivity}></lightning-button-icon>
+                                <lightning-button-icon icon-name="utility:right" variant="brand" alternative-text="Remove" title="Remove" disabled={disableMoveButtons} onclick={handleRemoveActivity}></lightning-button-icon>
+                            </div>
+    
+                            <!-- ACTIVITIES TO SCHEDULE COLUMN -->
+                            <div class="customSectionStyle">
+                                <div class="customHeaderBoxStyle" style="background: lightblue">
+                                    Activities to Schedule
+                                </div>
+                                <div class="customBodyBoxStyle" style="background: lightblue">
+                                    <template for:each={activityData} for:item="activityRecord">
+                                        <template if:true={activityRecord.selected}>
+                                            <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;" hidden={activityRecord.hidden} onclick={handleActivitySelection}>
+                                                {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                            </div>
+                                        </template>
+                                        <template if:false={activityRecord.selected}>
+                                            <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: lightblue" hidden={activityRecord.hidden} onclick={handleActivitySelection}>
+                                                {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                            </div>
+                                        </template>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </lightning-tab>
+                </template>
+            </lightning-tabset>
+        </template>
+
+        <template if:false={showSchedulingModal}>
+            <lightning-tabset variant="vertical">
+                <lightning-tab label="All">
+                    One Content !
+                </lightning-tab>
+                <lightning-tab label="Transport">
+                    Two Content !
+                </lightning-tab>
+                <lightning-tab label="Activity">
+                    Three Content !
+                </lightning-tab>
+                <lightning-tab label="Meal">
+                    Three Content !
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+
+        <!-- FOOTER -->
+        <template if:true={showFooter}>
+            <div slot="footer">
+                <template if:false={showSchedulingModal}>
+                    <lightning-button variant="brand" label="Previous" type="submit" onclick={handleOpenSchedulingAssistant}></lightning-button>
+                    <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveBooking}></lightning-button>
+                </template>
+                <template if:true={showSchedulingModal}>
+                    <lightning-button variant="brand" label="Next" type="submit" onclick={handleOpenBookingAssistant}></lightning-button>
+                    <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveSchedule}></lightning-button>
+                </template>
+            </div>
+        </template>
+    </lightning-quick-action-panel>
+</template>

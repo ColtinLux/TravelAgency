@@ -1,0 +1,45 @@
+.modal-container {
+    width: 90% !important;
+    max-width: 90% !important;
+}
+
+.slds-p-around_medium {
+    padding: 0px !important;
+}
+
+.slds-tabs_scoped__content {
+    padding: 0px !important;
+}
+
+.customSectionStyle {
+    padding: 0.51rem;
+    min-width: 18rem;
+    width: 100%;
+    margin: 0.5rem;
+    text-align: center;
+}
+
+.customHeaderBoxStyle {
+    border: thin solid lightgrey;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    padding: .5rem;
+}
+
+.customBodyBoxStyle {
+    border: thin solid lightgrey;
+    border-radius: 0.5rem;
+    min-height: 35rem;
+    max-height: 35rem;
+    overflow: scroll;
+}
+
+.customBoxStyle {
+    border: thin solid lightgrey;
+    border-radius: 0.5rem;
+    margin: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    text-align: start;
+    padding-left: 0.5rem;
+}
