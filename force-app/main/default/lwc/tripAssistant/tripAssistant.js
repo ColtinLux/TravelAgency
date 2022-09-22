@@ -99,8 +99,8 @@ export default class TripAssistant extends LightningElement {
         let tempFilteredList = [];
         for(let activity of this.activityData){
             let tempActivity = activity;
-            if(this.recordTypeFilter != 'All'){
-                if(activity.recordTypeName != this.recordTypeFilter){
+            if(!this.recordTypeFilter.includes('All')){
+                if(!activity.recordTypeName.includes(this.recordTypeFilter)){
                     tempActivity.hidden = true;
                 } else {
                     tempActivity.hidden = false;
@@ -115,8 +115,8 @@ export default class TripAssistant extends LightningElement {
         tempFilteredList = [];
         for(let activity of this.scheduledData){
             let tempActivity = activity;
-            if(this.recordTypeFilter != 'All'){
-                if(activity.recordTypeName != this.recordTypeFilter){
+            if(!this.recordTypeFilter.includes('All')){
+                if(!activity.recordTypeName.includes(this.recordTypeFilter)){
                     tempActivity.hidden = true;
                 } else {
                     tempActivity.hidden = false;
