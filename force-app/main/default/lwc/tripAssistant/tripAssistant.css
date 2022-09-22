@@ -42,4 +42,7 @@
     padding-bottom: 1rem;
     text-align: start;
     padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    display: flex;
+    justify-content: space-between;
 }

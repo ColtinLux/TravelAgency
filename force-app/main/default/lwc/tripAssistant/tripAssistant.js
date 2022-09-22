@@ -8,10 +8,6 @@ export default class TripAssistant extends LightningElement {
     @track schedulingHeaderTitle = 'Scheduling Assistant';
     @track bookingHeaderTitle = 'Booking Assistant';
 
-    @track showNext;
-    @track showPrevious;
-    @track showSave;
-
     @track dayData;
     @track selectedDays;
 
@@ -55,7 +51,8 @@ export default class TripAssistant extends LightningElement {
                 location: 'Miami', 
                 selected: true,
                 recordTypeName: 'Activity',
-                hidden: false
+                hidden: false,
+                recommended: false
             };
             result.push(activityRec);
             this.selectedActivities.push(activityRec.id);
@@ -72,10 +69,6 @@ export default class TripAssistant extends LightningElement {
 
     get headerTitle(){
         return (this.showSchedulingModal ? this.schedulingHeaderTitle : this.bookingHeaderTitle);
-    }
-
-    get showFooter(){
-        return (this.showNext || this.showPrevious || this.showSave);
     }
 
     get disableMoveButtons(){
@@ -99,7 +92,7 @@ export default class TripAssistant extends LightningElement {
     // MODAL & TAB METHODS
     //-----------------------------------------------------------------------
 
-    handleActiveTab(event) {
+    handleActiveTab(event){
         //event.target.value
         this.recordTypeFilter = event.target.value;
 
@@ -134,6 +127,10 @@ export default class TripAssistant extends LightningElement {
             tempFilteredList.push(activity);
         }
         this.scheduledData = tempFilteredList;
+    }
+
+    handleActiveDayTab(event){
+        console.log(event.target.value);
     }
     
     handleOpenBookingAssistant(){
@@ -263,6 +260,14 @@ export default class TripAssistant extends LightningElement {
                 for(let iter = 0; iter < tripDay.activities.length; iter++){
                     this.scheduledData.push(tripDay.activities[iter]);
                 }
+
+                let tempActivityData = this.activityData;
+                for(let activity of tempActivityData){
+                    if(activity.location == tripDay.location){
+                        activity.recommended = true;
+                    }
+                }
+                this.activityData = tempActivityData;
             } else {
                 tripDay.selected = false;
             }

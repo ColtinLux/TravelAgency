@@ -60,18 +60,24 @@
                             <!-- ACTIVITIES TO SCHEDULE COLUMN -->
                             <div class="customSectionStyle">
                                 <div class="customHeaderBoxStyle" style="background: lightblue">
-                                    Activities to Schedule
+                                    Available Activities
                                 </div>
                                 <div class="customBodyBoxStyle" style="background: lightblue">
                                     <template for:each={activityData} for:item="activityRecord">
                                         <template if:true={activityRecord.selected}>
                                             <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;" hidden={activityRecord.hidden} onclick={handleActivitySelection}>
                                                 {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                                <template if:true={activityRecord.recommended}>
+                                                    <lightning-icon icon-name="utility:light_bulb" size="x-small" alternative-text="Recommendation" title="Recommendation"></lightning-icon>
+                                                </template>
                                             </div>
                                         </template>
                                         <template if:false={activityRecord.selected}>
                                             <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: lightblue" hidden={activityRecord.hidden} onclick={handleActivitySelection}>
                                                 {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                                <template if:true={activityRecord.recommended}>
+                                                    <lightning-icon icon-name="utility:light_bulb" size="x-small" alternative-text="Recommendation" title="Recommendation"></lightning-icon>
+                                                </template>
                                             </div>
                                         </template>
                                     </template>
@@ -86,33 +92,24 @@
 
         <template if:false={showSchedulingModal}>
             <lightning-tabset variant="vertical">
-                <lightning-tab label="All">
-                    One Content !
-                </lightning-tab>
-                <lightning-tab label="Transport">
-                    Two Content !
-                </lightning-tab>
-                <lightning-tab label="Activity">
-                    Three Content !
-                </lightning-tab>
-                <lightning-tab label="Meal">
-                    Three Content !
-                </lightning-tab>
+                <template for:each={dayData} for:item="dayRecord">
+                    <lightning-tab label={dayRecord.label} key={dayRecord.id} value={dayRecord.id} onactive={handleActiveDayTab}>
+
+                    </lightning-tab>
+                </template>
             </lightning-tabset>
         </template>
 
         <!-- FOOTER -->
-        <template if:true={showFooter}>
-            <div slot="footer">
-                <template if:false={showSchedulingModal}>
-                    <lightning-button variant="brand" label="Previous" type="submit" onclick={handleOpenSchedulingAssistant}></lightning-button>
-                    <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveBooking}></lightning-button>
-                </template>
-                <template if:true={showSchedulingModal}>
-                    <lightning-button variant="brand" label="Next" type="submit" onclick={handleOpenBookingAssistant}></lightning-button>
-                    <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveSchedule}></lightning-button>
-                </template>
-            </div>
-        </template>
+        <div slot="footer" style="display: flex;">
+            <template if:false={showSchedulingModal}>
+                <lightning-button variant="brand" label="Previous" type="submit" onclick={handleOpenSchedulingAssistant} style="margin-right: auto;"></lightning-button>
+                <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveBooking}></lightning-button>
+            </template>
+            <template if:true={showSchedulingModal}>
+                <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveSchedule} style="margin-right: 1rem; margin-left: auto;"></lightning-button>
+                <lightning-button variant="brand" label="Next" type="submit" onclick={handleOpenBookingAssistant}></lightning-button>
+            </template>
+        </div>
     </lightning-quick-action-panel>
 </template>
