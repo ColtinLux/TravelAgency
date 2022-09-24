@@ -8,6 +8,12 @@ public without sharing class TripPDFGenerator{
 
     @AuraEnabled
     public static Id generateTripPDF(Id tripId){
+        Id attachmentId = null;
+
+        if(tripId == null){
+            return attachmentId;
+        }
+
         Trip__c tripRecord = [SELECT Id, Name, Location__c, Start_Date__c, End_Date__c, Status__c, Description__c, Start_Weekday__c, End_Weekday__c FROM Trip__c WHERE Id = :tripId];
         List<Trip_Day__c> tripDayList = [SELECT Id, Name, Status__c, Last_Day__c, Trip_Accommodation__c, Location__c, Date__c FROM Trip_Day__c WHERE Trip__c = :tripId ORDER BY Date__c];
         Map<Id, Trip_Day__c> tripDayMap = new Map<Id, Trip_Day__c>(tripDayList);
@@ -21,7 +27,9 @@ public without sharing class TripPDFGenerator{
         pdfContent = getBody(pdfContent, true, tripRecord, tripDayMap, tripActivityList, accommodationMap);
         pdfContent += FORM_HTML_END;
         pdfContent = removeNull(pdfContent);
-        return attachPDF(tripRecord, pdfContent);
+        attachmentId = attachPDF(tripRecord, pdfContent);
+
+        return attachmentId;
     }
 
     public static String getHeader(String pdfContent, Trip__c tripRecord){
@@ -57,7 +65,7 @@ public without sharing class TripPDFGenerator{
     public static String getBody(String pdfContent, Boolean useStatus, Trip__c tripRecord, Map<Id, Trip_Day__c> tripDayMap, List<Trip_Activity__c> tripActivityList, Map<Id, Trip_Accommodation__c> accommodationMap){
         if(useStatus){
             if(tripRecord.Status__c == 'Finalizing Dates'){
-                // Do Nothing
+                return pdfContent;
             } else if(tripRecord.Status__c == 'Booking Transportation'){
                 pdfContent = getTransportationInformation(pdfContent, tripRecord, tripDayMap, tripActivityList);
             } else if(tripRecord.Status__c == 'Booking Accommodations'){
@@ -130,8 +138,10 @@ public without sharing class TripPDFGenerator{
                     pdfContent += '<P> Room Description: ' + accommodation.Room_Description__c + '</P>';
                     pdfContent += '<P> Price: ' + 'TBD' + '</P>';
                     pdfContent += '<br>';
-                    pdfContent += '<P> Check-In: ' + accommodation.Check_In__c.format() + '</P>';
-                    pdfContent += '<P> Check-Out: ' + accommodation.Check_Out__c.format() + '</P>';
+                    String checkIn = accommodation.Check_In__c != null ? accommodation.Check_In__c.format() : '';
+                    pdfContent += '<P> Check-In: ' + checkIn + '</P>';
+                    String checkOut = accommodation.Check_Out__c != null ? accommodation.Check_Out__c.format() : '';
+                    pdfContent += '<P> Check-Out: ' + checkOut + '</P>';
                     pdfContent += '<br>';
                     pdfContent += '<P> Address: ' + accommodation.Accommodation_Address__c + '</P>';
                     pdfContent += '<P> Email: ' + accommodation.Accommodation_Email__c + '</P>';
@@ -148,7 +158,8 @@ public without sharing class TripPDFGenerator{
             pdfContent += '<P> Days without Accommodations: </P>';
             for(Id tripDayId : daysWithoutAccommodations){
                 Trip_Day__c tripDayRecord = tripDayMap.get(tripDayId);
-                pdfContent += '<P> ' + tripDayRecord.Name + ': ' + Date.valueOf(tripDayRecord.Date__c).format() + ' (' + tripDayRecord.Location__c + ') </P>';
+                String dateValue = Date.valueOf(tripDayRecord.Date__c) != null ? Date.valueOf(tripDayRecord.Date__c).format() : '';
+                pdfContent += '<P> ' + tripDayRecord.Name + ': ' + dateValue + ' (' + tripDayRecord.Location__c + ') </P>';
             }
             pdfContent += '<br>';
             pdfContent += '<br>';
@@ -178,11 +189,11 @@ public without sharing class TripPDFGenerator{
 
         for(Id tripDayId : dayToActivityMap.keySet()){
             Trip_Day__c tripDayRecord = tripDayMap.get(tripDayId);
-            pdfContent += '<P> ' + tripDayRecord.Name + ': ' + Date.valueOf(tripDayRecord.Date__c).format() + ' (' + tripDayRecord.Location__c + ') </P>';
+            String dateValue = Date.valueOf(tripDayRecord.Date__c) != null ? Date.valueOf(tripDayRecord.Date__c).format() : '';
+            pdfContent += '<P> ' + tripDayRecord.Name + ': ' + dateValue + ' (' + tripDayRecord.Location__c + ') </P>';
             pdfContent += '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
 
             for(Trip_Activity__c activityRecord : dayToActivityMap.get(tripDayId)){
-                String startTime = activityRecord.Start_Time__c != null ? activityRecord.Start_Time__c.format() : '';
                 if(recordType != null){
                     String thisRecordType = activityRecord.RecordType.Name;
                     if(thisRecordType == recordType && thisRecordType == 'Transportation'){
@@ -220,7 +231,8 @@ public without sharing class TripPDFGenerator{
                 pdfContent += '<P> Price: ' + activityRecord.Price__c + '</P>';
                 pdfContent += '<br>';
                 pdfContent += '<P> Location: ' + activityRecord.Start_Location__c + '</P>';
-                pdfContent += '<P> Date/Time: ' + activityRecord.Start_Time__c + '</P>';
+                String startTime = activityRecord.Start_Time__c != null ? activityRecord.Start_Time__c.format() : '';
+                pdfContent += '<P> Date/Time: ' + startTime + '</P>';
                 pdfContent += '<P> Address: ' + activityRecord.Start_Address__c + '</P>';
                 pdfContent += '<br>';
                 pdfContent += '<P> Notes: ' + activityRecord.Notes__c + '</P>';
@@ -243,11 +255,13 @@ public without sharing class TripPDFGenerator{
         pdfContent += '<P> Price: ' + activityRecord.Price__c + '</P>';
         pdfContent += '<br>';
         pdfContent += '<P> Departure Location: ' + activityRecord.Start_Location__c + '</P>';
-        pdfContent += '<P> Departure Date/Time: ' + activityRecord.Start_Time__c.format() + '</P>';
+        String startTime = activityRecord.Start_Time__c != null ? activityRecord.Start_Time__c.format() : '';
+        pdfContent += '<P> Departure Date/Time: ' + startTime + '</P>';
         pdfContent += '<P> Departure Address: ' + activityRecord.Start_Address__c + '</P>';
         pdfContent += '<br>';
         pdfContent += '<P> Arrival Location: ' + activityRecord.End_Location__c + '</P>';
-        pdfContent += '<P> Arrival Date/Time: ' + activityRecord.End_Time__c.format() + '</P>';
+        String endTime = activityRecord.End_Time__c != null ? activityRecord.End_Time__c.format() : '';
+        pdfContent += '<P> Arrival Date/Time: ' + endTime + '</P>';
         pdfContent += '<P> Arrival Address: ' + activityRecord.End_Address__c + '</P>';
         pdfContent += '<br>';
         pdfContent += '<P> Notes: ' + activityRecord.Notes__c + '</P>';
@@ -267,7 +281,8 @@ public without sharing class TripPDFGenerator{
         pdfContent += '<P> Price: ' + activityRecord.Price__c + '</P>';
         pdfContent += '<br>';
         pdfContent += '<P> Location: ' + activityRecord.Start_Location__c + '</P>';
-        pdfContent += '<P> Date/Time: ' + activityRecord.Start_Time__c + '</P>';
+        String startTime = activityRecord.Start_Time__c != null ? activityRecord.Start_Time__c.format() : '';
+        pdfContent += '<P> Date/Time: ' + startTime + '</P>';
         pdfContent += '<P> Address: ' + activityRecord.Start_Address__c + '</P>';
         pdfContent += '<br>';
         pdfContent += '<P> Notes: ' + activityRecord.Notes__c + '</P>';
@@ -287,11 +302,13 @@ public without sharing class TripPDFGenerator{
         pdfContent += '<P> Price: ' + activityRecord.Price__c + '</P>';
         pdfContent += '<br>';
         pdfContent += '<P> Start Location: ' + activityRecord.Start_Location__c + '</P>';
-        pdfContent += '<P> Start Date/Time: ' + activityRecord.Start_Time__c + '</P>';
+        String startTime = activityRecord.Start_Time__c != null ? activityRecord.Start_Time__c.format() : '';
+        pdfContent += '<P> Start Date/Time: ' + startTime + '</P>';
         pdfContent += '<P> Start Address: ' + activityRecord.Start_Address__c + '</P>';
         pdfContent += '<br>';
         pdfContent += '<P> End Location: ' + activityRecord.End_Location__c + '</P>';
-        pdfContent += '<P> End Date/Time: ' + activityRecord.End_Time__c + '</P>';
+        String endTime = activityRecord.End_Time__c != null ? activityRecord.End_Time__c.format() : '';
+        pdfContent += '<P> End Date/Time: ' + endTime + '</P>';
         pdfContent += '<P> End Address: ' + activityRecord.End_Address__c + '</P>';
         pdfContent += '<br>';
         pdfContent += '<P> Notes: ' + activityRecord.Notes__c + '</P>';
