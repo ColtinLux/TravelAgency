@@ -46,3 +46,25 @@
     display: flex;
     justify-content: space-between;
 }
+
+.customCalendarBodyBoxStyle {
+    border: thin solid lightgrey;
+    border-radius: 0.5rem;
+    min-height: 35rem;
+    max-height: 35rem;
+    overflow: scroll;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.customCalendarBoxStyle {
+    border: thin solid lightgrey;
+    border-radius: 0.5rem;
+    text-align: start;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+}

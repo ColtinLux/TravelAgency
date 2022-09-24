@@ -17,6 +17,8 @@ export default class TripAssistant extends LightningElement {
     @track scheduledData;
     @track selectedScheduled;
 
+    @track calendarData;
+
     connectedCallback(){
         loadStyle(this, modal);
         //-----------------------------------------------------------------------
@@ -61,6 +63,20 @@ export default class TripAssistant extends LightningElement {
 
         this.selectedScheduled = [];
         this.scheduledData = [];
+
+        result = [];
+        let numOfCalednarBlocks = 19;
+        for(let iter = 8; iter <= numOfCalednarBlocks; iter++){
+            let label = iter > 12 ? iter % 12 : iter;
+            let calendarRec = {
+                id: iter, 
+                label: label,  
+                selected: false,
+                booked: false
+            };
+            result.push(calendarRec);
+        }
+        this.calendarData = result;
     }
 
     //-----------------------------------------------------------------------

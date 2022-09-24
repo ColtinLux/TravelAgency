@@ -111,14 +111,12 @@
                                 <div class="customHeaderBoxStyle" style="background: rgb(182 216 211)">
                                     Calendar
                                 </div>
-                                <div class="customBodyBoxStyle" style="background: rgb(182 216 211)">
-                                    <!-- <template for:each={scheduledData} for:item="activityRecord">
-                                        <template if:false={activityRecord.hidden}>
-                                            <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;">
-                                                {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
-                                            </div>
-                                        </template>
-                                    </template> -->
+                                <div class="customCalendarBodyBoxStyle" style="background: rgb(182 216 211)">
+                                    <template for:each={calendarData} for:item="timeBlock">
+                                        <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: white;">
+                                            {timeBlock.label}
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
 
