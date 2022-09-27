@@ -5,7 +5,7 @@
         <!-- SCHEDULING ASSISTANT -->
         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <template if:true={showSchedulingModal}>
-            <lightning-tabset variant="scoped" style="overflow: scroll;">
+            <lightning-tabset variant="scoped">
                 <template for:each={tabs} for:item="tab">
                     <lightning-tab label={tab.label} key={tab.value} value={tab.value} onactive={handleActiveTab}>
                         <div style="display: flex;">

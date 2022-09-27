@@ -64,7 +64,7 @@ public without sharing class TripPDFGenerator{
 
     public static String getBody(String pdfContent, Boolean useStatus, Trip__c tripRecord, Map<Id, Trip_Day__c> tripDayMap, List<Trip_Activity__c> tripActivityList, Map<Id, Trip_Accommodation__c> accommodationMap){
         if(useStatus){
-            if(tripRecord.Status__c == 'Finalizing Dates'){
+            if(tripRecord.Status__c == 'New' || tripRecord.Status__c == 'Finalizing Dates'){
                 return pdfContent;
             } else if(tripRecord.Status__c == 'Booking Transportation'){
                 pdfContent = getTransportationInformation(pdfContent, tripRecord, tripDayMap, tripActivityList);
