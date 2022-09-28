@@ -33,32 +33,74 @@ public without sharing class TripPDFGenerator{
     }
 
     public static String getHeader(String pdfContent, Trip__c tripRecord){
-        pdfContent += '<H2>' + tripRecord.Name + ' Travel Plan' + '</H2>';
+        pdfContent += '<div>';
+        pdfContent += '<H2 style="color: lightblue;">' + tripRecord.Name + ' Travel Plan' + '</H2>';
         pdfContent += '<br>';
         pdfContent += '<P>' + 'Status: ' + tripRecord.Status__c + '</P>';
         pdfContent += '<br>';
+        pdfContent += '<br>';
+        pdfContent += '</div>';
         return pdfContent;
     }
 
     public static String getGeneralInformation(String pdfContent, Trip__c tripRecord){
-        pdfContent += '---------------------------------------------------------------------------------------------------------------';
-        pdfContent += '<H3>' + '1. General Information' + '</H3>';
-        pdfContent += '---------------------------------------------------------------------------------------------------------------';
-        pdfContent += '<br>';
-        pdfContent += '<P>' + 'Destination: ' + tripRecord.Location__c + '</P>';
-        pdfContent += '<br>';
+        //pdfContent += '---------------------------------------------------------------------------------------------------------------';
+        //pdfContent += '<H3 style="color: rgb(182, 216, 211);">' + '1. General Information' + '</H3>';
+        //pdfContent += '---------------------------------------------------------------------------------------------------------------';
+
+        pdfContent += '<table border="1" cellpadding="4"><tr><td bgcolor="#b6d8d3">';
+        pdfContent += 'General Information';
+        pdfContent += '</td></tr></table>';
+
+        pdfContent += '<table border="1" cellpadding="10"><tr><td bgcolor="#f2f2f2">';
+
+        Map<String, String> newMap = new Map<String, String>();
+        newMap.put('Destination', tripRecord.Location__c);
         String startDate = tripRecord.Start_Date__c != null ? ', ' + Date.valueOf(tripRecord.Start_Date__c).format() : '';
-        pdfContent += '<P>' + 'Start Date: ' + tripRecord.Start_Weekday__c + startDate + '</P>';
+        newMap.put('Start Date', tripRecord.Start_Weekday__c + startDate);
         String endDate = tripRecord.End_Date__c != null ? ', ' + Date.valueOf(tripRecord.End_Date__c).format() : '';
-        pdfContent += '<P>' + 'End Date: ' + tripRecord.End_Weekday__c + endDate + '</P>';
+        newMap.put('End Date', tripRecord.End_Weekday__c + endDate);
+        pdfContent = getTable(pdfContent, newMap);
+
         pdfContent += '<br>';
-        pdfContent += '<P>' + 'Budget: ' + 'TBD' + '</P>';
-        pdfContent += '<P>' + 'Spent: ' + 'TBD' + '</P>';
-        pdfContent += '<P>' + 'Remaining: ' + 'TBD' + '</P>';
+
+        newMap = new Map<String, String>();
+        newMap.put('Budget', 'TBD');
+        newMap.put('Spent', 'TBD');
+        newMap.put('Remainder', 'TBD');
+        pdfContent = getTable(pdfContent, newMap);
+        
         pdfContent += '<br>';
-        pdfContent += '<P>' + 'Notes: ' + tripRecord.Description__c + '</P>';
+
+        pdfContent = getTable(pdfContent, 'Notes: ' + tripRecord.Description__c);
+
+        pdfContent += '</td></tr></table>';
+
         pdfContent += '<br>';
-        pdfContent += '<br>';
+        return pdfContent;
+    }
+
+    public static String getTable(String pdfContent, Map<String, String> dataMap){
+        pdfContent += '<table border="1" cellpadding="4" bgcolor="#ffffff">';
+
+        for(String key : dataMap.keySet()){
+            String value = dataMap.get(key);
+            pdfContent += '<tr>';
+            pdfContent += '<td>' + key + '</td>';
+            pdfContent += '<td>' + value + '</td>';
+            pdfContent += '</tr>';
+        }
+        
+        pdfContent += '</table>';
+
+        return pdfContent;
+    }
+
+    public static String getTable(String pdfContent, String content){
+        pdfContent += '<table border="1" cellpadding="4"><tr><td bgcolor="#ffffff">';
+        pdfContent += content;
+        pdfContent += '</td></tr></table>';
+
         return pdfContent;
     }
 
@@ -94,20 +136,27 @@ public without sharing class TripPDFGenerator{
     }
 
     public static String getTransportationInformation(String pdfContent, Trip__c tripRecord, Map<Id, Trip_Day__c> tripDayMap, List<Trip_Activity__c> tripActivityList){
-        pdfContent += '---------------------------------------------------------------------------------------------------------------';
-        pdfContent += '<H3>' + '2. Transportation' + '</H3>';
-        pdfContent += '---------------------------------------------------------------------------------------------------------------';
+        //pdfContent += '---------------------------------------------------------------------------------------------------------------';
+        //pdfContent += '<H3 style="color: rgb(182, 216, 211);">' + '2. Transportation' + '</H3>';
+        //pdfContent += '---------------------------------------------------------------------------------------------------------------';
+        
+        pdfContent += '<table border="1"><tr><td bgcolor="#b6d8d3">';
+        pdfContent += 'Transportation';
+        pdfContent += '</td></tr></table>';
+        
         pdfContent += '<br>';
 
         for(Trip_Activity__c activityRecord : tripActivityList){
             if(activityRecord.RecordType.Name == 'Transportation'){
+                pdfContent += '<table border="1"><tr><td bgcolor="#add8e6">';
                 if(tripDayMap.containsKey(activityRecord.Trip_Day__c)){
                     Trip_Day__c tripDay = tripDayMap.get(activityRecord.Trip_Day__c);
-                    pdfContent += '<P> ' + tripDay.Name + ': ' + Date.valueOf(tripDay.Date__c).format() + ' (' + tripDay.Location__c + ') </P>';
+                    pdfContent += tripDay.Name + ': ' + Date.valueOf(tripDay.Date__c).format() + ' (' + tripDay.Location__c + ')';
                 } else {
-                    pdfContent += '<P> Missing Trip Day </P>';
+                    pdfContent += 'Missing Trip Day';
                 }
-                pdfContent += '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
+                pdfContent += '</td></tr></table>';
+                //pdfContent += '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
                 pdfContent = getTransporationFields(pdfContent, activityRecord);
                 pdfContent += '<br>';
             }
@@ -117,9 +166,9 @@ public without sharing class TripPDFGenerator{
     }
 
     public static String getAccommodationInformation(String pdfContent, Trip__c tripRecord, Map<Id, Trip_Day__c> tripDayMap, List<Trip_Activity__c> tripActivityList, Map<Id, Trip_Accommodation__c> accommodationMap){
-        pdfContent += '---------------------------------------------------------------------------------------------------------------';
-        pdfContent += '<H3>' + '3. Accommodations' + '</H3>';
-        pdfContent += '---------------------------------------------------------------------------------------------------------------';
+        //pdfContent += '---------------------------------------------------------------------------------------------------------------';
+        pdfContent += '<H3 style="color: rgb(182, 216, 211);">' + '3. Accommodations' + '</H3>';
+        //pdfContent += '---------------------------------------------------------------------------------------------------------------';
         pdfContent += '<br>';
 
         Set<Id> printedAccommodations = new Set<Id>();
@@ -169,9 +218,9 @@ public without sharing class TripPDFGenerator{
     }
 
     public static String getDailyPlanInformation(String pdfContent, Trip__c tripRecord, Map<Id, Trip_Day__c> tripDayMap, List<Trip_Activity__c> tripActivityList, String recordType){
-        pdfContent += '---------------------------------------------------------------------------------------------------------------';
-        pdfContent += '<H3>' + '4. Daily Plan ' + recordType + '</H3>';
-        pdfContent += '---------------------------------------------------------------------------------------------------------------';
+        //pdfContent += '---------------------------------------------------------------------------------------------------------------';
+        pdfContent += '<H3 style="color: rgb(182, 216, 211);">' + '4. Daily Plan ' + recordType + '</H3>';
+        //pdfContent += '---------------------------------------------------------------------------------------------------------------';
         pdfContent += '<br>';
 
         Map<Id, List<Trip_Activity__c>> dayToActivityMap = new Map<Id, List<Trip_Activity__c>>();
@@ -190,8 +239,8 @@ public without sharing class TripPDFGenerator{
         for(Id tripDayId : dayToActivityMap.keySet()){
             Trip_Day__c tripDayRecord = tripDayMap.get(tripDayId);
             String dateValue = Date.valueOf(tripDayRecord.Date__c) != null ? Date.valueOf(tripDayRecord.Date__c).format() : '';
-            pdfContent += '<P> ' + tripDayRecord.Name + ': ' + dateValue + ' (' + tripDayRecord.Location__c + ') </P>';
-            pdfContent += '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
+            pdfContent += '<P style="color: lightblue;"> ' + tripDayRecord.Name + ': ' + dateValue + ' (' + tripDayRecord.Location__c + ') </P>';
+            //pdfContent += '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
 
             for(Trip_Activity__c activityRecord : dayToActivityMap.get(tripDayId)){
                 if(recordType != null){
@@ -217,12 +266,12 @@ public without sharing class TripPDFGenerator{
         }
 
         if(nonMappedActivityList.size() > 0){
-            pdfContent += '<P> Activities to Schedule </P>';
-            pdfContent += '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
+            pdfContent += '<P style="color: lightblue;"> Activities to Schedule </P>';
+            //pdfContent += '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~';
             for(Trip_Activity__c activityRecord : nonMappedActivityList){
                 pdfContent += '<br>';
-                pdfContent += '<P> ' + activityRecord.Name + '</P>';
-                pdfContent += '=============================';
+                pdfContent += '<P style="color: lightblue;"> ' + activityRecord.Name + '</P>';
+                //pdfContent += '=============================';
                 pdfContent += '<br>';
                 pdfContent += '<P> Status: ' + activityRecord.Status__c + '</P>';
                 pdfContent += '<P> Confirmation Number: ' + activityRecord.Confirmation_Number__c + '</P>';
@@ -246,33 +295,48 @@ public without sharing class TripPDFGenerator{
 
     public static String getTransporationFields(String pdfContent, Trip_Activity__c activityRecord){
         pdfContent += '<br>';
-        pdfContent += '<P> Transport: ' + activityRecord.Name + '</P>';
-        pdfContent += '=============================';
+
+        Map<String, String> newMap = new Map<String, String>();
+        newMap.put('Transport', activityRecord.Name);
+        newMap.put('Status', activityRecord.Status__c);
+        newMap.put('Confirmation Number', activityRecord.Confirmation_Number__c);
+        newMap.put('Identifier (Flight #)', activityRecord.Identifier__c);
+        String price = activityRecord.Price__c != null ? activityRecord.Price__c.format() : '';
+        newMap.put('Price', price);
+        pdfContent = getTable(pdfContent, newMap);
+
         pdfContent += '<br>';
-        pdfContent += '<P> Status: ' + activityRecord.Status__c + '</P>';
-        pdfContent += '<P> Confirmation Number: ' + activityRecord.Confirmation_Number__c + '</P>';
-        pdfContent += '<P> Identifier (Flight Number): ' + activityRecord.Identifier__c + '</P>';
-        pdfContent += '<P> Price: ' + activityRecord.Price__c + '</P>';
-        pdfContent += '<br>';
-        pdfContent += '<P> Departure Location: ' + activityRecord.Start_Location__c + '</P>';
+
+        newMap = new Map<String, String>();
+        newMap.put('Departure Location', activityRecord.Start_Location__c);
         String startTime = activityRecord.Start_Time__c != null ? activityRecord.Start_Time__c.format() : '';
-        pdfContent += '<P> Departure Date/Time: ' + startTime + '</P>';
-        pdfContent += '<P> Departure Address: ' + activityRecord.Start_Address__c + '</P>';
+        newMap.put('Departure Date/Time', startTime);
+        newMap.put('Departure Address', activityRecord.Start_Address__c);
+        pdfContent = getTable(pdfContent, newMap);
+
         pdfContent += '<br>';
-        pdfContent += '<P> Arrival Location: ' + activityRecord.End_Location__c + '</P>';
+
+        newMap = new Map<String, String>();
+        newMap.put('Arrival Location', activityRecord.End_Location__c);
         String endTime = activityRecord.End_Time__c != null ? activityRecord.End_Time__c.format() : '';
-        pdfContent += '<P> Arrival Date/Time: ' + endTime + '</P>';
-        pdfContent += '<P> Arrival Address: ' + activityRecord.End_Address__c + '</P>';
+        newMap.put('Arrival Date/Time', endTime);
+        newMap.put('Arrival Address', activityRecord.End_Address__c);
+        pdfContent = getTable(pdfContent, newMap);
+
         pdfContent += '<br>';
-        pdfContent += '<P> Notes: ' + activityRecord.Notes__c + '</P>';
+
+        pdfContent += '<table border="1"><tr><td>';
+        pdfContent += 'Notes: ' + activityRecord.Notes__c;
+        pdfContent += '</td></tr></table>';
+
         pdfContent += '<br>';
         return pdfContent;
     }
 
     public static String getMealFields(String pdfContent, Trip_Activity__c activityRecord){
         pdfContent += '<br>';
-        pdfContent += '<P> Meal: ' + activityRecord.Name + '</P>';
-        pdfContent += '=============================';
+        pdfContent += '<P style="color: lightblue;"> Meal: ' + activityRecord.Name + '</P>';
+        //pdfContent += '=============================';
         pdfContent += '<br>';
         pdfContent += '<P> Status: ' + activityRecord.Status__c + '</P>';
         pdfContent += '<P> Confirmation Number: ' + activityRecord.Confirmation_Number__c + '</P>';
@@ -292,8 +356,8 @@ public without sharing class TripPDFGenerator{
 
     public static String getActivityFields(String pdfContent, Trip_Activity__c activityRecord){
         pdfContent += '<br>';
-        pdfContent += '<P> Activity: ' + activityRecord.Name + '</P>';
-        pdfContent += '=============================';
+        pdfContent += '<P style="color: lightblue;"> Activity: ' + activityRecord.Name + '</P>';
+        //pdfContent += '=============================';
         pdfContent += '<br>';
         pdfContent += '<P> Status: ' + activityRecord.Status__c + '</P>';
         pdfContent += '<P> Confirmation Number: ' + activityRecord.Confirmation_Number__c + '</P>';
