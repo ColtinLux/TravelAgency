@@ -29,8 +29,8 @@
 .customBodyBoxStyle {
     border: thin solid lightgrey;
     border-radius: 0.5rem;
-    min-height: 22rem;
-    max-height: 22rem;
+    min-height: 24rem;
+    max-height: 24rem;
     overflow: scroll;
 }
 
@@ -45,13 +45,14 @@
     padding-right: 0.5rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .customCalendarBodyBoxStyle {
     border: thin solid lightgrey;
     border-radius: 0.5rem;
-    min-height: 22rem;
-    max-height: 22rem;
+    min-height: 24rem;
+    max-height: 24rem;
     overflow: scroll;
     height: 100%;
     display: flex;

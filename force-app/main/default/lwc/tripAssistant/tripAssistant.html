@@ -65,7 +65,7 @@
                             <!-- ACTIVITIES TO SCHEDULE COLUMN -->
                             <div class="customSectionStyle">
                                 <div class="customHeaderBoxStyle" style="background: lightblue">
-                                    Available Activities
+                                    Activities to Schedule
                                 </div>
                                 <div class="customBodyBoxStyle" style="background: lightblue">
                                     <template for:each={activityData} for:item="activityRecord">
@@ -114,7 +114,9 @@
                                 <div class="customCalendarBodyBoxStyle" style="background: rgb(182 216 211)">
                                     <template for:each={calendarData} for:item="timeBlock">
                                         <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: white;">
-                                            {timeBlock.label}
+                                            <div style="padding-left: 0.2rem;">
+                                                {timeBlock.label}
+                                            </div>
                                         </div>
                                     </template>
                                 </div>
@@ -123,13 +125,16 @@
                             <!-- SCHEDULED ACTIVITIES COLUMN -->
                             <div class="customSectionStyle">
                                 <div class="customHeaderBoxStyle" style="background: lightblue">
-                                    Scheduled Activities
+                                    Activities to Book
                                 </div>
                                 <div class="customBodyBoxStyle" style="background: lightblue">
                                     <template for:each={scheduledData} for:item="activityRecord">
                                         <template if:false={activityRecord.hidden}>
                                             <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;">
                                                 {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                                <div>
+                                                    <lightning-button variant="brand" label="Book" value={activityRecord.id} onclick={handleBookActivity}></lightning-button>
+                                                </div>
                                             </div>
                                         </template>
                                     </template>

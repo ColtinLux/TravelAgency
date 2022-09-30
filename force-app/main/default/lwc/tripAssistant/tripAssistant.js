@@ -65,8 +65,7 @@ export default class TripAssistant extends LightningElement {
         this.scheduledData = [];
 
         result = [];
-        let numOfCalednarBlocks = 19;
-        for(let iter = 8; iter <= numOfCalednarBlocks; iter++){
+        for(let iter = 6; iter <= 22; iter++){
             let label = iter > 12 ? iter % 12 : iter;
             let calendarRec = {
                 id: iter, 
@@ -391,5 +390,13 @@ export default class TripAssistant extends LightningElement {
 
     handleSaveSchedule(){
         console.log(JSON.stringify(this.dayData));
+    }
+
+    //-----------------------------------------------------------------------
+    // BOOKING ASSISTANT
+    //-----------------------------------------------------------------------
+
+    handleBookActivity(event){
+        console.log(event.target.value);
     }
 }
