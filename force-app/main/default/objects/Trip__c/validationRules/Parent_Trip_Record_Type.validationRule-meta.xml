@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Trip_Record_Type</fullName>
+    <active>true</active>
+    <errorConditionFormula>IF( NOT(ISNULL( Parent_Trip__c )),
+Parent_Trip__r.RecordType.DeveloperName == &apos;Single_Location&apos;,
+FALSE)</errorConditionFormula>
+    <errorDisplayField>Parent_Trip__c</errorDisplayField>
+    <errorMessage>Please find the correct Multi-Location Trip to associate to this record.</errorMessage>
+</ValidationRule>

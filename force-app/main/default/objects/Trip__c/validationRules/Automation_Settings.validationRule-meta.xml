@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Automation_Settings</fullName>
+    <active>true</active>
+    <errorConditionFormula>NOT(Enable_Trip_Day_Automation__c) &amp;&amp;
+(Enable_Trip_Activity_Automation__c || 
+Enable_Trip_Transportation_Automation__c ||
+Enable_Trip_Meal_Automation__c)</errorConditionFormula>
+    <errorDisplayField>Enable_Trip_Day_Automation__c</errorDisplayField>
+    <errorMessage>Please Enable Trip Day Automation.</errorMessage>
+</ValidationRule>
