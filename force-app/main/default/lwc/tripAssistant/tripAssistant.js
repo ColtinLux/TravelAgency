@@ -2,6 +2,7 @@ import { LightningElement, api, track } from 'lwc';
 import { loadStyle } from "lightning/platformResourceLoader";
 import modal from "@salesforce/resourceUrl/customActionScreenModal";
 import getTripDays from '@salesforce/apex/TripAssistantController.getTripDays';
+import getActivitiesWithoutTripDays from '@salesforce/apex/TripAssistantController.getActivitiesWithoutTripDays';
 
 export default class TripAssistant extends LightningElement {
     @api recordId;
@@ -22,7 +23,7 @@ export default class TripAssistant extends LightningElement {
 
     @track calendarData;
 
-    renderedCallback(){
+    connectedCallback(){
         loadStyle(this, modal);
         //-----------------------------------------------------------------------
         // DEFAULT SETTINGS
@@ -31,44 +32,46 @@ export default class TripAssistant extends LightningElement {
         this.recordTypeFilter = 'All';
         //-----------------------------------------------------------------------
         this.dayData = [];
+        this.selectedDays = [];
         this.activityData = [];
+        this.selectedActivities = [];
         this.scheduledData = [];
-        if(this.recordId){
-            this.setData();
+        this.selectedScheduled = [];
+    }
+
+    renderedCallback(){
+        console.log('Rendered Callback Criteria Met: ');
+        console.log(this.recordId && this.dayData.length == 0);
+        if(this.recordId && this.dayData.length == 0){
+            this.getData();
         }
     }
 
-    setData(){
-        this.selectedDays = [];
-        // let result = [];
-        // let numOfDays = 10;
-        // for(let iter = 1; iter <= numOfDays; iter++){
-        //     let activitiesList = [];
-        //     let dayRec = {id: iter, label: 'Day ' + iter, weekDay: 'Monday', location: 'Miami', selected: true, activities: activitiesList};
-        //     result.push(dayRec);
-        //     this.selectedDays.push(dayRec.id);
-        // }
-        // this.dayData = result;
-
+    getData(){
         getTripDays({tripId: this.recordId})
             .then(result => {
                 if(result){
+                    this.selectedDays = [];
+                    this.dayData = [];
                     let resultList = [];
                     for(let tripDayRec of JSON.parse(result)){
+                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         let activitiesList = [];
-                        for(let tripDayActivity of tripDayRec.Trip_Activities__r){
+                        for(let tripDayActivity of tripDayRec.Trip_Activities__r.records){
+                            console.log(tripDayActivity.RecordType.Name);
                             let activityRec = {
                                 id: tripDayActivity.Id, 
                                 label: tripDayActivity.Name, 
-                                duration: tripDayActivity.Duration_Hours__c, 
-                                location: tripDayActivity.Area__c, 
+                                duration: tripDayActivity.Duration_Hours__c == undefined ? '0h' : tripDayActivity.Duration_Hours__c + 'h', 
+                                location: tripDayActivity.Area__c == undefined ? 'Area Unknown' : tripDayActivity.Area__c, 
                                 selected: false,
                                 recordTypeName: tripDayActivity.RecordType.Name,
                                 hidden: false,
                                 recommended: false
                             };
-                            activitiesList.push(activityRec)
+                            activitiesList.push(activityRec);
                         }
+                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         let dayRec = {
                             id: tripDayRec.Id, 
                             label: tripDayRec.Name, 
@@ -77,39 +80,50 @@ export default class TripAssistant extends LightningElement {
                             selected: true, 
                             activities: activitiesList
                         };
-                        result.push(dayRec);
+                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        resultList.push(dayRec);
                         this.selectedDays.push(dayRec.id);
                     }
                     this.dayData = resultList;
+                } else {
+                    this.dayData.push('No Data');
                 }
             })
             .catch(error => {
                 console.log('error :', error);
+                this.dayData.push('Failure');
             })
-
-        this.selectedActivities = [];
-        result = [];
-        let numOfActivities = 10;
-        for(let iter = 1; iter <= numOfActivities; iter++){
-            let activityRec = {
-                id: iter, 
-                label: 'Activity' + ' ' + iter, 
-                duration: 2, 
-                location: 'Miami', 
-                selected: true,
-                recordTypeName: 'Activity',
-                hidden: false,
-                recommended: false
-            };
-            result.push(activityRec);
-            this.selectedActivities.push(activityRec.id);
-        }
-        this.activityData = result;
-
-        this.selectedScheduled = [];
-        this.scheduledData = [];
-
-        result = [];
+        
+        getActivitiesWithoutTripDays({tripId: this.recordId})
+            .then(result => {
+                if(result){
+                    this.selectedActivities = [];
+                    let resultList = [];
+                    for(let tripActivityRec of JSON.parse(result)){
+                        let activityRec = {
+                            id: tripActivityRec.Id, 
+                            label: tripActivityRec.Name, 
+                            duration: tripActivityRec.Duration_Hours__c == undefined ? '0h' : tripActivityRec.Duration_Hours__c + 'h', 
+                            location: tripActivityRec.Area__c == undefined ? 'Area Unknown' : tripActivityRec.Area__c, 
+                            selected: true,
+                            recordTypeName: tripActivityRec.RecordType.Name,
+                            hidden: false,
+                            recommended: false
+                        };
+                        resultList.push(activityRec);
+                        this.selectedActivities.push(activityRec.id);
+                    }
+                    this.activityData = resultList;
+                } else {
+                    this.activityData.push('No Data');
+                }
+            })
+            .catch(error => {
+                console.log('error :', error);
+                this.activityData.push('Failure');
+            })
+        
+        let resultList = [];
         for(let iter = 6; iter <= 22; iter++){
             let label = iter > 12 ? iter % 12 : iter;
             let calendarRec = {
@@ -118,9 +132,9 @@ export default class TripAssistant extends LightningElement {
                 selected: false,
                 booked: false
             };
-            result.push(calendarRec);
+            resultList.push(calendarRec);
         }
-        this.calendarData = result;
+        this.calendarData = resultList;
     }
 
     //-----------------------------------------------------------------------

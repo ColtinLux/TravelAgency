@@ -43,12 +43,12 @@
                                         <template if:false={activityRecord.hidden}>
                                             <template if:true={activityRecord.selected}>
                                                 <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;" onclick={handleScheduledActivitySelection}>
-                                                    {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                                    {activityRecord.label} - {activityRecord.duration} - {activityRecord.location}
                                                 </div>
                                             </template>
                                             <template if:false={activityRecord.selected}>
                                                 <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: lightblue" onclick={handleScheduledActivitySelection}>
-                                                    {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                                    {activityRecord.label} - {activityRecord.duration} - {activityRecord.location}
                                                 </div>
                                             </template>
                                         </template>
@@ -72,7 +72,7 @@
                                         <template if:false={activityRecord.hidden}>
                                             <template if:true={activityRecord.selected}>
                                                 <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;" onclick={handleActivitySelection}>
-                                                    {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                                    {activityRecord.label} - {activityRecord.duration} - {activityRecord.location}
                                                     <template if:true={activityRecord.recommended}>
                                                         <lightning-icon icon-name="utility:light_bulb" size="x-small" alternative-text="Recommendation" title="Recommendation"></lightning-icon>
                                                     </template>
@@ -80,7 +80,7 @@
                                             </template>
                                             <template if:false={activityRecord.selected}>
                                                 <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: lightblue" onclick={handleActivitySelection}>
-                                                    {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                                    {activityRecord.label} - {activityRecord.duration} - {activityRecord.location}
                                                     <template if:true={activityRecord.recommended}>
                                                         <lightning-icon icon-name="utility:light_bulb" size="x-small" alternative-text="Recommendation" title="Recommendation"></lightning-icon>
                                                     </template>
