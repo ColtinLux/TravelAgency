@@ -27,11 +27,11 @@
     <types>
         <members>*</members>
         <name>LightningComponentBundle</name>
-    </types>
+    </types> -->
     <types>
         <members>*</members>
         <name>StaticResource</name>
-    </types> -->
+    </types> 
     <types>
         <members>Trip__c</members>
         <members>Trip_Day__c</members>
