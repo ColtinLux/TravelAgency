@@ -1,8 +1,11 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import { loadStyle } from "lightning/platformResourceLoader";
 import modal from "@salesforce/resourceUrl/customActionScreenModal";
+import getTripDays from '@salesforce/apex/TripAssistantController.getTripDays';
 
 export default class TripAssistant extends LightningElement {
+    @api recordId;
+
     @track showSchedulingModal;
 
     @track schedulingHeaderTitle = 'Scheduling Assistant';
@@ -19,7 +22,7 @@ export default class TripAssistant extends LightningElement {
 
     @track calendarData;
 
-    connectedCallback(){
+    renderedCallback(){
         loadStyle(this, modal);
         //-----------------------------------------------------------------------
         // DEFAULT SETTINGS
@@ -27,20 +30,62 @@ export default class TripAssistant extends LightningElement {
         this.showSchedulingModal = true;
         this.recordTypeFilter = 'All';
         //-----------------------------------------------------------------------
-        this.setData();
+        this.dayData = [];
+        this.activityData = [];
+        this.scheduledData = [];
+        if(this.recordId){
+            this.setData();
+        }
     }
 
     setData(){
         this.selectedDays = [];
-        let result = [];
-        let numOfDays = 10;
-        for(let iter = 1; iter <= numOfDays; iter++){
-            let activitiesList = [];
-            let dayRec = {id: iter, label: 'Day ' + iter, weekDay: 'Monday', location: 'Miami', selected: true, activities: activitiesList};
-            result.push(dayRec);
-            this.selectedDays.push(dayRec.id);
-        }
-        this.dayData = result;
+        // let result = [];
+        // let numOfDays = 10;
+        // for(let iter = 1; iter <= numOfDays; iter++){
+        //     let activitiesList = [];
+        //     let dayRec = {id: iter, label: 'Day ' + iter, weekDay: 'Monday', location: 'Miami', selected: true, activities: activitiesList};
+        //     result.push(dayRec);
+        //     this.selectedDays.push(dayRec.id);
+        // }
+        // this.dayData = result;
+
+        getTripDays({tripId: this.recordId})
+            .then(result => {
+                if(result){
+                    let resultList = [];
+                    for(let tripDayRec of JSON.parse(result)){
+                        let activitiesList = [];
+                        for(let tripDayActivity of tripDayRec.Trip_Activities__r){
+                            let activityRec = {
+                                id: tripDayActivity.Id, 
+                                label: tripDayActivity.Name, 
+                                duration: tripDayActivity.Duration_Hours__c, 
+                                location: tripDayActivity.Area__c, 
+                                selected: false,
+                                recordTypeName: tripDayActivity.RecordType.Name,
+                                hidden: false,
+                                recommended: false
+                            };
+                            activitiesList.push(activityRec)
+                        }
+                        let dayRec = {
+                            id: tripDayRec.Id, 
+                            label: tripDayRec.Name, 
+                            weekDay: tripDayRec.Day__c, 
+                            location: tripDayRec.Location__c, 
+                            selected: true, 
+                            activities: activitiesList
+                        };
+                        result.push(dayRec);
+                        this.selectedDays.push(dayRec.id);
+                    }
+                    this.dayData = resultList;
+                }
+            })
+            .catch(error => {
+                console.log('error :', error);
+            })
 
         this.selectedActivities = [];
         result = [];
