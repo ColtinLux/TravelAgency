@@ -223,11 +223,11 @@
             <actionType>StandardButton</actionType>
             <sortOrder>21</sortOrder>
         </platformActionListItems>
-        <platformActionListItems>
+        <!-- <platformActionListItems>
             <actionName>Trip__c.Assistant</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>0</sortOrder>
-        </platformActionListItems>
+        </platformActionListItems> -->
         <platformActionListItems>
             <actionName>Trip__c.Generate_PDF</actionName>
             <actionType>QuickAction</actionType>
