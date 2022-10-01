@@ -24,6 +24,7 @@ export default class TripAssistant extends LightningElement {
     @track selectedScheduled;
 
     @track calendarData;
+    @track currentCalendarData;
 
     connectedCallback(){
         loadStyle(this, modal);
@@ -207,6 +208,18 @@ export default class TripAssistant extends LightningElement {
 
     handleActiveDayTab(event){
         console.log(event.target.value);
+        this.currentCalendarData = [];
+        let tripDayId = event.target.value;
+
+        let result = [];
+        for(let tripDay of this.dayData){
+            if(tripDay.id == tripDayId){
+                for(let tripActivity of tripDay.activities){
+                    result.push(tripActivity);
+                }
+            }
+        }
+        this.currentCalendarData = result;
     }
     
     handleOpenBookingAssistant(){

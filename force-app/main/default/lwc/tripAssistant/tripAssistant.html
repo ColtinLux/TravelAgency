@@ -128,10 +128,10 @@
                                     Activities to Book
                                 </div>
                                 <div class="customBodyBoxStyle" style="background: lightblue">
-                                    <template for:each={scheduledData} for:item="activityRecord">
+                                    <template for:each={currentCalendarData} for:item="activityRecord">
                                         <template if:false={activityRecord.hidden}>
                                             <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;">
-                                                {activityRecord.label} - {activityRecord.duration}h - {activityRecord.location}
+                                                {activityRecord.label} - {activityRecord.duration} - {activityRecord.location}
                                                 <div>
                                                     <lightning-button variant="brand" label="Book" value={activityRecord.id} onclick={handleBookActivity}></lightning-button>
                                                 </div>
