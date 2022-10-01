@@ -1,8 +1,10 @@
 import { LightningElement, api, track } from 'lwc';
 import { loadStyle } from "lightning/platformResourceLoader";
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import modal from "@salesforce/resourceUrl/customActionScreenModal";
 import getTripDays from '@salesforce/apex/TripAssistantController.getTripDays';
 import getActivitiesWithoutTripDays from '@salesforce/apex/TripAssistantController.getActivitiesWithoutTripDays';
+import saveSchedule from '@salesforce/apex/TripAssistantController.saveSchedule';
 
 export default class TripAssistant extends LightningElement {
     @api recordId;
@@ -58,7 +60,6 @@ export default class TripAssistant extends LightningElement {
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         let activitiesList = [];
                         for(let tripDayActivity of tripDayRec.Trip_Activities__r.records){
-                            console.log(tripDayActivity.RecordType.Name);
                             let activityRec = {
                                 id: tripDayActivity.Id, 
                                 label: tripDayActivity.Name, 
@@ -70,6 +71,7 @@ export default class TripAssistant extends LightningElement {
                                 recommended: false
                             };
                             activitiesList.push(activityRec);
+                            this.scheduledData.push(activityRec);
                         }
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         let dayRec = {
@@ -448,7 +450,45 @@ export default class TripAssistant extends LightningElement {
     //-----------------------------------------------------------------------
 
     handleSaveSchedule(){
-        console.log(JSON.stringify(this.dayData));
+        let result = [];
+        for(let tripDay of this.dayData){
+            for(let tripActivity of tripDay.activities){
+                let saveRec = {
+                    Id: tripActivity.id,
+                    Trip_Day__c: tripDay.id
+                };
+                result.push(saveRec);
+            }
+        }
+        console.log(result);
+
+        saveSchedule({tripId: this.recordId, data: JSON.stringify(result)})
+            .then(result => {
+                if(result){
+                    const evt = new ShowToastEvent({
+                        title: 'Success',
+                        message: 'Schedule Saved.',
+                        variant: 'success',
+                    });
+                    this.dispatchEvent(evt);
+                } else {
+                    const evt = new ShowToastEvent({
+                        title: 'Error',
+                        message: 'Schedule could not be saved.',
+                        variant: 'error',
+                    });
+                    this.dispatchEvent(evt);
+                }
+            })
+            .catch(error => {
+                console.log('error :', error);
+                const evt = new ShowToastEvent({
+                    title: 'Error',
+                    message: 'Schedule could not be saved.',
+                    variant: 'error',
+                });
+                this.dispatchEvent(evt);
+            })
     }
 
     //-----------------------------------------------------------------------
