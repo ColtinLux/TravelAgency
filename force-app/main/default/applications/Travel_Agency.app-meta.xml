@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#34D7D2</headerColor>
+        <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
+    </brand>
+    <formFactors>Small</formFactors>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <label>Travel Agency</label>
+    <navType>Standard</navType>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>Multi_Location_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>Trip__c</pageOrSobjectType>
+        <recordType>Trip__c.Multiple_Locations</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>Multi_Location_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Trip__c</pageOrSobjectType>
+        <recordType>Trip__c.Multiple_Locations</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <tabs>standard-Account</tabs>
+    <tabs>standard-Contact</tabs>
+    <tabs>Trip__c</tabs>
+    <tabs>Trip_Activity__c</tabs>
+    <tabs>Accommodation__c</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>Travel_Agency_UtilityBar</utilityBar>
+</CustomApplication>

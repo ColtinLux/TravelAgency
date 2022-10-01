@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PathAssistant xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <entityName>Trip__c</entityName>
+    <fieldName>Status__c</fieldName>
+    <masterLabel>Trip</masterLabel>
+    <pathAssistantSteps>
+        <fieldNames>Enable_Trip_Day_Automation__c</fieldNames>
+        <fieldNames>Enable_Trip_Activity_Automation__c</fieldNames>
+        <picklistValueName>Booking Activities</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>Enable_Trip_Day_Automation__c</fieldNames>
+        <fieldNames>Enable_Trip_Meal_Automation__c</fieldNames>
+        <picklistValueName>Booking Restaurants</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>Enable_Trip_Day_Automation__c</fieldNames>
+        <fieldNames>Enable_Trip_Transportation_Automation__c</fieldNames>
+        <picklistValueName>Booking Transportation</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>Start_Date__c</fieldNames>
+        <fieldNames>End_Date__c</fieldNames>
+        <picklistValueName>Finalizing Dates</picklistValueName>
+    </pathAssistantSteps>
+    <recordTypeName>Single_Location</recordTypeName>
+</PathAssistant>

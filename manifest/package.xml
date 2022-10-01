@@ -30,6 +30,14 @@
     </types> -->
     <types>
         <members>*</members>
+        <name>PathAssistant</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>CustomApplication</name>
+    </types>
+    <types>
+        <members>*</members>
         <name>StaticResource</name>
     </types> 
     <types>
@@ -41,10 +49,10 @@
         <members>Traveler__c</members>
         <name>CustomObject</name>
     </types>
-    <types>
+    <!-- <types>
         <members>*</members>
         <name>Layout</name>
-    </types>
+    </types> -->
     <types>
         <members>*</members>
         <name>Flexipage</name>
