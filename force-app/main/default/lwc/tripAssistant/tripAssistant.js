@@ -63,6 +63,7 @@ export default class TripAssistant extends NavigationMixin(LightningElement) {
                 if(result){
                     this.selectedDays = [];
                     this.dayData = [];
+                    this.scheduledData = [];
                     let resultList = [];
                     for(let tripDayRec of JSON.parse(result)){
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -148,6 +149,7 @@ export default class TripAssistant extends NavigationMixin(LightningElement) {
                 if(result){
                     this.selectedDays = [];
                     this.dayData = [];
+                    this.scheduledData = [];
                     let resultList = [];
                     for(let tripDayRec of JSON.parse(result)){
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
