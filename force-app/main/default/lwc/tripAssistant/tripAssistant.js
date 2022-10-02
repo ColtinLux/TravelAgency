@@ -67,22 +67,24 @@ export default class TripAssistant extends NavigationMixin(LightningElement) {
                     for(let tripDayRec of JSON.parse(result)){
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         let activitiesList = [];
-                        for(let tripDayActivity of tripDayRec.Trip_Activities__r.records){
-                            let activityRec = {
-                                id: tripDayActivity.Id, 
-                                label: tripDayActivity.Name, 
-                                duration: tripDayActivity.Duration_Hours__c == undefined ? '0h' : tripDayActivity.Duration_Hours__c + 'h', 
-                                location: tripDayActivity.Area__c == undefined ? 'Area Unknown' : tripDayActivity.Area__c, 
-                                status: tripDayActivity.Status__c,
-                                startTime: tripDayActivity.Start_Time__c,
-                                endTime: tripDayActivity.End_Time__c,
-                                selected: false,
-                                recordTypeName: tripDayActivity.RecordType.Name,
-                                hidden: false,
-                                recommended: false
-                            };
-                            activitiesList.push(activityRec);
-                            this.scheduledData.push(activityRec);
+                        if(tripDayRec.Trip_Activities__r && tripDayRec.Trip_Activities__r.records){
+                            for(let tripDayActivity of tripDayRec.Trip_Activities__r.records){
+                                let activityRec = {
+                                    id: tripDayActivity.Id, 
+                                    label: tripDayActivity.Name, 
+                                    duration: tripDayActivity.Duration_Hours__c == undefined ? '0h' : tripDayActivity.Duration_Hours__c + 'h', 
+                                    location: tripDayActivity.Area__c == undefined ? 'Area Unknown' : tripDayActivity.Area__c, 
+                                    status: tripDayActivity.Status__c,
+                                    startTime: tripDayActivity.Start_Time__c,
+                                    endTime: tripDayActivity.End_Time__c,
+                                    selected: false,
+                                    recordTypeName: tripDayActivity.RecordType.Name,
+                                    hidden: false,
+                                    recommended: false
+                                };
+                                activitiesList.push(activityRec);
+                                this.scheduledData.push(activityRec);
+                            }
                         }
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         let dayRec = {
@@ -138,19 +140,6 @@ export default class TripAssistant extends NavigationMixin(LightningElement) {
                 console.log('error :', error);
                 this.activityData.push('Failure');
             })
-        
-        let resultList = [];
-        for(let iter = 6; iter <= 22; iter++){
-            let label = iter > 12 ? iter % 12 : iter;
-            let calendarRec = {
-                id: iter, 
-                label: label,  
-                selected: false,
-                booked: false
-            };
-            resultList.push(calendarRec);
-        }
-        this.calendarData = resultList;
     }
 
     resetData(currentTab){
@@ -163,22 +152,24 @@ export default class TripAssistant extends NavigationMixin(LightningElement) {
                     for(let tripDayRec of JSON.parse(result)){
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         let activitiesList = [];
-                        for(let tripDayActivity of tripDayRec.Trip_Activities__r.records){
-                            let activityRec = {
-                                id: tripDayActivity.Id, 
-                                label: tripDayActivity.Name, 
-                                duration: tripDayActivity.Duration_Hours__c == undefined ? '0h' : tripDayActivity.Duration_Hours__c + 'h', 
-                                location: tripDayActivity.Area__c == undefined ? 'Area Unknown' : tripDayActivity.Area__c, 
-                                status: tripDayActivity.Status__c,
-                                startTime: tripDayActivity.Start_Time__c,
-                                endTime: tripDayActivity.End_Time__c,
-                                selected: false,
-                                recordTypeName: tripDayActivity.RecordType.Name,
-                                hidden: false,
-                                recommended: false
-                            };
-                            activitiesList.push(activityRec);
-                            this.scheduledData.push(activityRec);
+                        if(tripDayRec.Trip_Activities__r && tripDayRec.Trip_Activities__r.records){
+                            for(let tripDayActivity of tripDayRec.Trip_Activities__r.records){
+                                let activityRec = {
+                                    id: tripDayActivity.Id, 
+                                    label: tripDayActivity.Name, 
+                                    duration: tripDayActivity.Duration_Hours__c == undefined ? '0h' : tripDayActivity.Duration_Hours__c + 'h', 
+                                    location: tripDayActivity.Area__c == undefined ? 'Area Unknown' : tripDayActivity.Area__c, 
+                                    status: tripDayActivity.Status__c,
+                                    startTime: tripDayActivity.Start_Time__c,
+                                    endTime: tripDayActivity.End_Time__c,
+                                    selected: false,
+                                    recordTypeName: tripDayActivity.RecordType.Name,
+                                    hidden: false,
+                                    recommended: false
+                                };
+                                activitiesList.push(activityRec);
+                                this.scheduledData.push(activityRec);
+                            }
                         }
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         let dayRec = {
