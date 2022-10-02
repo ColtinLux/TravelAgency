@@ -113,11 +113,20 @@
                                 </div>
                                 <div class="customCalendarBodyBoxStyle" style="background: rgb(182 216 211)">
                                     <template for:each={calendarData} for:item="timeBlock">
-                                        <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: white;">
-                                            <div style="padding-left: 0.2rem;">
-                                                {timeBlock.label}
+                                        <template if:true={timeBlock.booked}>
+                                            <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: grey;">
+                                                <div style="padding-left: 0.2rem;">
+                                                    {timeBlock.label}
+                                                </div>
                                             </div>
-                                        </div>
+                                        </template>
+                                        <template if:false={timeBlock.booked}>
+                                            <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: white;">
+                                                <div style="padding-left: 0.2rem;">
+                                                    {timeBlock.label}
+                                                </div>
+                                            </div>
+                                        </template>
                                     </template>
                                 </div>
                             </div>

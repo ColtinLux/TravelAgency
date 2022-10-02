@@ -66,6 +66,9 @@ export default class TripAssistant extends LightningElement {
                                 label: tripDayActivity.Name, 
                                 duration: tripDayActivity.Duration_Hours__c == undefined ? '0h' : tripDayActivity.Duration_Hours__c + 'h', 
                                 location: tripDayActivity.Area__c == undefined ? 'Area Unknown' : tripDayActivity.Area__c, 
+                                status: tripDayActivity.Status__c,
+                                startTime: tripDayActivity.Start_Time__c,
+                                endTime: tripDayActivity.End_Time__c,
                                 selected: false,
                                 recordTypeName: tripDayActivity.RecordType.Name,
                                 hidden: false,
@@ -107,7 +110,10 @@ export default class TripAssistant extends LightningElement {
                             id: tripActivityRec.Id, 
                             label: tripActivityRec.Name, 
                             duration: tripActivityRec.Duration_Hours__c == undefined ? '0h' : tripActivityRec.Duration_Hours__c + 'h', 
-                            location: tripActivityRec.Area__c == undefined ? 'Area Unknown' : tripActivityRec.Area__c, 
+                            location: tripActivityRec.Area__c == undefined ? 'Area Unknown' : tripActivityRec.Area__c,
+                            status: tripActivityRec.Status__c,
+                            startTime: tripActivityRec.Start_Time__c,
+                            endTime: tripActivityRec.End_Time__c,
                             selected: true,
                             recordTypeName: tripActivityRec.RecordType.Name,
                             hidden: false,
@@ -214,9 +220,35 @@ export default class TripAssistant extends LightningElement {
         let result = [];
         for(let tripDay of this.dayData){
             if(tripDay.id == tripDayId){
+                let bookedBlocks = [];
                 for(let tripActivity of tripDay.activities){
-                    result.push(tripActivity);
+                    if(tripActivity.status == 'Booked'){
+                        var start = new Date(tripActivity.startTime);
+                        let startHour = start.getHours();
+                        var end = new Date(tripActivity.endTime);
+                        let endHour = end.getHours();
+                        let iter = startHour;
+                        while(iter < endHour){
+                            bookedBlocks.push(iter);
+                            iter++;
+                        }
+                    } else {
+                        result.push(tripActivity);
+                    }
                 }
+
+                let resultList = [];
+                for(let iter = 6; iter <= 22; iter++){
+                    let label = iter > 12 ? iter % 12 : iter;
+                    let calendarRec = {
+                        id: iter, 
+                        label: label,  
+                        selected: false,
+                        booked: bookedBlocks.includes(iter)
+                    };
+                    resultList.push(calendarRec);
+                }
+                this.calendarData = resultList;
             }
         }
         this.currentCalendarData = result;
@@ -418,8 +450,17 @@ export default class TripAssistant extends LightningElement {
                 //Add to Selected Activity
                 for(let tripActivity of this.scheduledData){
                     if(this.selectedScheduled.includes(String(tripActivity.id))){
-                        this.activityData.unshift(tripActivity);
-                        this.selectedActivities.push(String(tripActivity.id));
+                        if(tripActivity.status == 'Booked'){
+                            const evt = new ShowToastEvent({
+                                title: 'Error',
+                                message: tripActivity.label + ' Activity is Booked. Cancel Booking Before Removing from Schedule.',
+                                variant: 'error',
+                            });
+                            this.dispatchEvent(evt);
+                        } else {
+                            this.activityData.unshift(tripActivity);
+                            this.selectedActivities.push(String(tripActivity.id));
+                        }
                     }
                 }
 

@@ -4,14 +4,14 @@
 public without sharing class TripAssistantController {
     @AuraEnabled
     public static String getTripDays(Id tripId){
-        List<Trip_Day__c> tripDays = [SELECT Id, Name, Day__c, Location__c, (SELECT Id, Name, Area__c, Duration_Hours__c, RecordTypeId, RecordType.Name FROM Trip_Activities__r) FROM Trip_Day__c WHERE Trip__c = :tripId];
+        List<Trip_Day__c> tripDays = [SELECT Id, Name, Day__c, Location__c, (SELECT Id, Name, Area__c, Duration_Hours__c, RecordTypeId, RecordType.Name, Status__c, Start_Time__c, End_Time__c FROM Trip_Activities__r) FROM Trip_Day__c WHERE Trip__c = :tripId];
 
         return JSON.serialize(tripDays);
     }
 
     @AuraEnabled
     public static String getActivitiesWithoutTripDays(Id tripId){
-        List<Trip_Activity__c> activitiesWithoutDays = [SELECT Id, Name, Area__c, Duration_Hours__c, RecordTypeId, RecordType.Name FROM Trip_Activity__c WHERE Trip__c = :tripId AND Trip_Day__c = null];
+        List<Trip_Activity__c> activitiesWithoutDays = [SELECT Id, Name, Area__c, Duration_Hours__c, RecordTypeId, RecordType.Name, Status__c, Start_Time__c, End_Time__c FROM Trip_Activity__c WHERE Trip__c = :tripId AND Trip_Day__c = null];
 
         return JSON.serialize(activitiesWithoutDays);
     }
