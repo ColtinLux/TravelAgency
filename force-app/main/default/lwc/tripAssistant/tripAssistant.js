@@ -1,15 +1,17 @@
 import { LightningElement, api, track } from 'lwc';
 import { loadStyle } from "lightning/platformResourceLoader";
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { NavigationMixin } from 'lightning/navigation';
 import modal from "@salesforce/resourceUrl/customActionScreenModal";
 import getTripDays from '@salesforce/apex/TripAssistantController.getTripDays';
 import getActivitiesWithoutTripDays from '@salesforce/apex/TripAssistantController.getActivitiesWithoutTripDays';
 import saveSchedule from '@salesforce/apex/TripAssistantController.saveSchedule';
 
-export default class TripAssistant extends LightningElement {
+export default class TripAssistant extends NavigationMixin(LightningElement) {
     @api recordId;
 
     @track showSchedulingModal;
+    @track showBookedModal;
 
     @track schedulingHeaderTitle = 'Scheduling Assistant';
     @track bookingHeaderTitle = 'Booking Assistant';
@@ -26,13 +28,18 @@ export default class TripAssistant extends LightningElement {
     @track calendarData;
     @track currentCalendarData;
 
+    @track activeDayTab;
+    @track loadingBookingAssistant;
+
     connectedCallback(){
         loadStyle(this, modal);
         //-----------------------------------------------------------------------
         // DEFAULT SETTINGS
         //-----------------------------------------------------------------------
         this.showSchedulingModal = true;
+        this.showBookedModal = false;
         this.recordTypeFilter = 'All';
+        this.loadingBookingAssistant = false;
         //-----------------------------------------------------------------------
         this.dayData = [];
         this.selectedDays = [];
@@ -43,8 +50,8 @@ export default class TripAssistant extends LightningElement {
     }
 
     renderedCallback(){
-        console.log('Rendered Callback Criteria Met: ');
-        console.log(this.recordId && this.dayData.length == 0);
+        //console.log('Rendered Callback Criteria Met: ');
+        //console.log(this.recordId && this.dayData.length == 0);
         if(this.recordId && this.dayData.length == 0){
             this.getData();
         }
@@ -146,6 +153,60 @@ export default class TripAssistant extends LightningElement {
         this.calendarData = resultList;
     }
 
+    resetData(currentTab){
+        getTripDays({tripId: this.recordId})
+            .then(result => {
+                if(result){
+                    this.selectedDays = [];
+                    this.dayData = [];
+                    let resultList = [];
+                    for(let tripDayRec of JSON.parse(result)){
+                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        let activitiesList = [];
+                        for(let tripDayActivity of tripDayRec.Trip_Activities__r.records){
+                            let activityRec = {
+                                id: tripDayActivity.Id, 
+                                label: tripDayActivity.Name, 
+                                duration: tripDayActivity.Duration_Hours__c == undefined ? '0h' : tripDayActivity.Duration_Hours__c + 'h', 
+                                location: tripDayActivity.Area__c == undefined ? 'Area Unknown' : tripDayActivity.Area__c, 
+                                status: tripDayActivity.Status__c,
+                                startTime: tripDayActivity.Start_Time__c,
+                                endTime: tripDayActivity.End_Time__c,
+                                selected: false,
+                                recordTypeName: tripDayActivity.RecordType.Name,
+                                hidden: false,
+                                recommended: false
+                            };
+                            activitiesList.push(activityRec);
+                            this.scheduledData.push(activityRec);
+                        }
+                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        let dayRec = {
+                            id: tripDayRec.Id, 
+                            label: tripDayRec.Name, 
+                            weekDay: tripDayRec.Day__c, 
+                            location: tripDayRec.Location__c, 
+                            selected: true, 
+                            activities: activitiesList
+                        };
+                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        resultList.push(dayRec);
+                        this.selectedDays.push(dayRec.id);
+                    }
+                    this.dayData = resultList;
+                    this.loadingBookingAssistant = false;
+                    this.activeDayTab = currentTab;
+                    this.resetCalendar(currentTab);
+                } else {
+                    this.dayData.push('No Data');
+                }
+            })
+            .catch(error => {
+                console.log('error :', error);
+                this.dayData.push('Failure');
+            })
+    }
+
     //-----------------------------------------------------------------------
     // GET METHODS
     //-----------------------------------------------------------------------
@@ -213,9 +274,15 @@ export default class TripAssistant extends LightningElement {
     }
 
     handleActiveDayTab(event){
-        console.log(event.target.value);
-        this.currentCalendarData = [];
+        //console.log(event.target.value);
         let tripDayId = event.target.value;
+        this.activeDayTab = tripDayId;
+        this.resetCalendar(tripDayId);
+    }
+
+    resetCalendar(tripDayId){
+        this.currentCalendarData = [];
+        this.calendarData = [];
 
         let result = [];
         for(let tripDay of this.dayData){
@@ -438,8 +505,8 @@ export default class TripAssistant extends LightningElement {
             }
         }
 
-        console.log(JSON.stringify(this.selectedActivities));
-        console.log(JSON.stringify(this.selectedScheduled));
+        //console.log(JSON.stringify(this.selectedActivities));
+        //console.log(JSON.stringify(this.selectedScheduled));
     }
 
     handleRemoveActivity(){
@@ -495,8 +562,8 @@ export default class TripAssistant extends LightningElement {
             }
         }
 
-        console.log(JSON.stringify(this.selectedActivities));
-        console.log(JSON.stringify(this.selectedScheduled));
+        //console.log(JSON.stringify(this.selectedActivities));
+        //console.log(JSON.stringify(this.selectedScheduled));
     }
 
     //-----------------------------------------------------------------------
@@ -514,7 +581,7 @@ export default class TripAssistant extends LightningElement {
                 result.push(saveRec);
             }
         }
-        console.log(result);
+        //console.log(result);
 
         saveSchedule({tripId: this.recordId, data: JSON.stringify(result)})
             .then(result => {
@@ -550,6 +617,28 @@ export default class TripAssistant extends LightningElement {
     //-----------------------------------------------------------------------
 
     handleBookActivity(event){
-        console.log(event.target.value);
+        this.showBookedModal = true;
+
+        this[NavigationMixin.GenerateUrl]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: event.target.value,
+                objectApiName: 'Trip_Activity',
+                actionName: 'edit'
+            },
+        }).then(url => {
+            window.open(url, "_blank");
+        });
+    }
+
+    handleCancelBooking(){
+        this.showBookedModal = false;
+    }
+
+    handleConfirmedBooking(){
+        const currentTab = this.activeDayTab;
+        this.loadingBookingAssistant = true;
+        this.showBookedModal = false;
+        this.resetData(currentTab);
     }
 }

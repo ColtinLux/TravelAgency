@@ -101,58 +101,65 @@
         <!-- BOOKING ASSISTANT -->
         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <template if:false={showSchedulingModal}>
-            <lightning-tabset variant="vertical">
-                <template for:each={dayData} for:item="dayRecord">
-                    <lightning-tab label={dayRecord.label} key={dayRecord.id} value={dayRecord.id} onactive={handleActiveDayTab}>
-                        <div style="display: flex;">
-
-                            <!-- CALENDAR COLUMN -->
-                            <div class="customSectionStyle">
-                                <div class="customHeaderBoxStyle" style="background: rgb(182 216 211)">
-                                    Calendar
+            <template if:false={loadingBookingAssistant}>
+                <lightning-tabset variant="vertical" active-tab-value={activeDayTab}>
+                    <template for:each={dayData} for:item="dayRecord">
+                        <lightning-tab label={dayRecord.label} key={dayRecord.id} value={dayRecord.id} onactive={handleActiveDayTab}>
+                            <div style="display: flex;">
+    
+                                <!-- CALENDAR COLUMN -->
+                                <div class="customSectionStyle">
+                                    <div class="customHeaderBoxStyle" style="background: rgb(182 216 211)">
+                                        Calendar
+                                    </div>
+                                    <div class="customCalendarBodyBoxStyle" style="background: rgb(182 216 211)">
+                                        <template for:each={calendarData} for:item="timeBlock">
+                                            <template if:true={timeBlock.booked}>
+                                                <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: grey;">
+                                                    <div style="padding-left: 0.2rem;">
+                                                        {timeBlock.label}
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <template if:false={timeBlock.booked}>
+                                                <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: white;">
+                                                    <div style="padding-left: 0.2rem;">
+                                                        {timeBlock.label}
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </div>
                                 </div>
-                                <div class="customCalendarBodyBoxStyle" style="background: rgb(182 216 211)">
-                                    <template for:each={calendarData} for:item="timeBlock">
-                                        <template if:true={timeBlock.booked}>
-                                            <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: grey;">
-                                                <div style="padding-left: 0.2rem;">
-                                                    {timeBlock.label}
+    
+                                <!-- SCHEDULED ACTIVITIES COLUMN -->
+                                <div class="customSectionStyle">
+                                    <div class="customHeaderBoxStyle" style="background: lightblue">
+                                        Activities to Book
+                                    </div>
+                                    <div class="customBodyBoxStyle" style="background: lightblue">
+                                        <template for:each={currentCalendarData} for:item="activityRecord">
+                                            <template if:false={activityRecord.hidden}>
+                                                <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;">
+                                                    {activityRecord.label} - {activityRecord.duration} - {activityRecord.location}
+                                                    <div>
+                                                        <lightning-button variant="brand" label="Book" value={activityRecord.id} onclick={handleBookActivity}></lightning-button>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </template>
                                         </template>
-                                        <template if:false={timeBlock.booked}>
-                                            <div id={timeBlock.id} key={timeBlock.id} data-id={timeBlock.id} class="customCalendarBoxStyle" style="background: white;">
-                                                <div style="padding-left: 0.2rem;">
-                                                    {timeBlock.label}
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </template>
+                                    </div>
                                 </div>
                             </div>
-
-                            <!-- SCHEDULED ACTIVITIES COLUMN -->
-                            <div class="customSectionStyle">
-                                <div class="customHeaderBoxStyle" style="background: lightblue">
-                                    Activities to Book
-                                </div>
-                                <div class="customBodyBoxStyle" style="background: lightblue">
-                                    <template for:each={currentCalendarData} for:item="activityRecord">
-                                        <template if:false={activityRecord.hidden}>
-                                            <div id={activityRecord.id} key={activityRecord.id} data-id={activityRecord.id} class="customBoxStyle" style="background: white;">
-                                                {activityRecord.label} - {activityRecord.duration} - {activityRecord.location}
-                                                <div>
-                                                    <lightning-button variant="brand" label="Book" value={activityRecord.id} onclick={handleBookActivity}></lightning-button>
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </lightning-tab>
-                </template>
-            </lightning-tabset>
+                        </lightning-tab>
+                    </template>
+                </lightning-tabset>
+            </template>
+            <template if:true={loadingBookingAssistant}>
+                <div style="height: 15rem;">
+                    <lightning-spinner alternative-text="Loading" size="medium" style="position: inherit;"></lightning-spinner>
+                </div>
+            </template>
         </template>
 
         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -161,12 +168,28 @@
         <div slot="footer" style="display: flex;">
             <template if:false={showSchedulingModal}>
                 <lightning-button variant="brand" label="Previous" type="submit" onclick={handleOpenSchedulingAssistant} style="margin-right: auto;"></lightning-button>
-                <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveBooking}></lightning-button>
+                <!-- <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveBooking}></lightning-button> -->
             </template>
             <template if:true={showSchedulingModal}>
                 <lightning-button variant="brand" label="Save" type="submit" onclick={handleSaveSchedule} style="margin-right: 1rem; margin-left: auto;"></lightning-button>
                 <lightning-button variant="brand" label="Next" type="submit" onclick={handleOpenBookingAssistant}></lightning-button>
             </template>
         </div>
+
+        <template if:true={showBookedModal}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header" style="background: lightgrey; border: thin solid grey;">
+                        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Booking Confirmed?</h1>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="border: thin solid grey;">
+                        <div style="display: flex; justify-content: center; margin: 1rem">
+                            <lightning-button label="Cancel" onclick={handleCancelBooking} style="margin-right: 1rem;"></lightning-button>
+                            <lightning-button variant="brand" label="Confirmed" onclick={handleConfirmedBooking}></lightning-button>
+                        </div>
+                    </div>
+                </div>
+              </section>
+        </template>
     </lightning-quick-action-panel>
 </template>
