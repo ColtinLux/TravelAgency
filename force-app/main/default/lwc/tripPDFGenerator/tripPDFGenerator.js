@@ -26,6 +26,7 @@ export default class TripPDFGenerator extends NavigationMixin(LightningElement) 
                         attributes: {
                             recordId: this.attachmentId,
                             objectApiName: 'Attachment',
+                            //objectApiName: 'ContentVersion',
                             actionName: 'view'
                         },
                     });

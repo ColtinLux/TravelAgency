@@ -46,6 +46,14 @@ public without sharing class TripPDFGenerator{
     }
 
     public static Id attachPDF(Trip__c tripRecord, String pdfContent){
+        ContentVersion pdfVersion = new ContentVersion();
+        pdfVersion.VersionData = Blob.toPDF(pdfContent); //This creates the PDF content
+        pdfVersion.FirstPublishLocationId = tripRecord.Id;
+        pdfVersion.Title = tripRecord.Name + ' ' + DateTime.now().format();
+        pdfVersion.PathOnClient = tripRecord.Name + ' ' + DateTime.now().format() + '.pdf';
+        insert pdfVersion;
+        //return pdfVersion.Id;
+
         Attachment attachmentPDF = new Attachment();
         attachmentPDF.parentId = tripRecord.Id;
         attachmentPDF.Name = tripRecord.Name + ' ' + DateTime.now().format() + '.pdf';
