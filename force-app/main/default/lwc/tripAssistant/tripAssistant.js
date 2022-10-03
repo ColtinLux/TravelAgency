@@ -91,7 +91,8 @@ export default class TripAssistant extends NavigationMixin(LightningElement) {
                         let dayRec = {
                             id: tripDayRec.Id, 
                             label: tripDayRec.Name, 
-                            weekDay: tripDayRec.Day__c, 
+                            weekDay: tripDayRec.Day__c,
+                            tabLabel: tripDayRec.Name + ' (' + tripDayRec.Day__c + ')',
                             location: tripDayRec.Location__c, 
                             selected: true, 
                             activities: activitiesList

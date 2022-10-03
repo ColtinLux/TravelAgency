@@ -104,7 +104,7 @@
             <template if:false={loadingBookingAssistant}>
                 <lightning-tabset variant="vertical" active-tab-value={activeDayTab}>
                     <template for:each={dayData} for:item="dayRecord">
-                        <lightning-tab label={dayRecord.label} key={dayRecord.id} value={dayRecord.id} onactive={handleActiveDayTab}>
+                        <lightning-tab label={dayRecord.tabLabel} key={dayRecord.id} value={dayRecord.id} onactive={handleActiveDayTab}>
                             <div style="display: flex;">
     
                                 <!-- CALENDAR COLUMN -->

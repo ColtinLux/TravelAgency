@@ -31,7 +31,6 @@ export default class TripPDFGenerator extends NavigationMixin(LightningElement) 
                         },
                     });
                 }
-                console.log('CHECK FILES');
             })
             .catch(error => {
                 console.log('error :', error);
