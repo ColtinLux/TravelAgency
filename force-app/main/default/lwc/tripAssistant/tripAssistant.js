@@ -180,6 +180,7 @@ export default class TripAssistant extends NavigationMixin(LightningElement) {
                             label: tripDayRec.Name, 
                             weekDay: tripDayRec.Day__c, 
                             location: tripDayRec.Location__c, 
+                            tabLabel: tripDayRec.Name + ' (' + tripDayRec.Day__c + ')',
                             selected: true, 
                             activities: activitiesList
                         };
@@ -284,15 +285,17 @@ export default class TripAssistant extends NavigationMixin(LightningElement) {
                 let bookedBlocks = [];
                 for(let tripActivity of tripDay.activities){
                     if(tripActivity.status == 'Booked'){
-                        var start = new Date(tripActivity.startTime);
-                        let startHour = start.getHours();
-                        var end = new Date(tripActivity.endTime);
-                        let endHour = end.getHours();
+                        console.log(tripActivity.startTime);
+                        var start = tripActivity.startTime.split(':');
+                        let startHour = Number(start[0]);
+                        var end = tripActivity.endTime != null ? tripActivity.endTime.split(':') : [startHour + 1];
+                        let endHour = Number(end[0]);
                         let iter = startHour;
                         while(iter < endHour){
                             bookedBlocks.push(iter);
                             iter++;
                         }
+                        console.log(bookedBlocks);
                     } else {
                         result.push(tripActivity);
                     }
